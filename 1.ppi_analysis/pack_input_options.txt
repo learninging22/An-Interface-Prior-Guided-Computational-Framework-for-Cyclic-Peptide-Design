@@ -1,0 +1,19 @@
+# === 基本设置 ===
+-use_input_sc
+-compute_packstat true
+-tracer_data_print true
+
+# === 打分与输出设置 ===
+-out:file:score_only ./pack_input_score.sc
+-add_regular_scores_to_scorefile true
+
+# === 界面侧链优化设置 ===
+-pack_input true
+-pack_separated true
+
+# === 界面分析设置 ===
+-atomic_burial_cutoff 0.01
+-sasa_calculator_probe_radius 1.4
+-pose_metrics::interface_cutoff 8.0
+
+

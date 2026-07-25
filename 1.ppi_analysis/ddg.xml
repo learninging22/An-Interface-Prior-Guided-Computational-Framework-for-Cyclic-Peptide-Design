@@ -1,0 +1,22 @@
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+    <ScoreFunction name="ref2015_cst" weights="ref2015.wts">
+      <Reweight scoretype="coordinate_constraint" weight="0.5"/>
+    </ScoreFunction>
+  </SCOREFXNS>
+
+  <MOVERS>
+    <MutateResidue name="mut" target="%%RESID%%" new_res="ALA"/>
+    <AddConstraints name="add_constraints"/>
+    <FastRelax name="relax" scorefxn="ref2015_cst" repeats="3"/>
+  </MOVERS>
+
+  <PROTOCOLS>
+    <Add mover_name="mut"/>
+    <Add mover_name="add_constraints"/>
+    <Add mover_name="relax"/>
+  </PROTOCOLS>
+
+  <OUTPUT scorefxn="ref2015_cst"/>
+</ROSETTASCRIPTS>
+

@@ -1,0 +1,18 @@
+-nstruct 1
+-parser:protocol relax.xml
+-jd2:failed_job_exception false
+-in:file:s ligandmpnn_outputs/round_1/backbones/*.pdb
+-in:file:fullatom
+-ignore_unrecognized_res true
+-out:path:all ligandmpnn_relax/round_1/
+-out:no_nstruct_label
+-out:prefix relaxed_
+-write_all_connect_info
+
+
+-mute protocols.generalized_kinematic_closure.filter.GeneralizedKICfilter
+-mute core.chemical.AtomICoor
+-mute core.conformation.Residue
+
+
+

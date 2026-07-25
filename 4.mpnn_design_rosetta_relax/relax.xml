@@ -1,0 +1,355 @@
+```xml
+<ROSETTASCRIPTS>
+  <SCOREFXNS>
+    <ScoreFunction name="ref2015" weights="ref2015.wts">
+    <Reweight scoretype="aspartimide_penalty" weight="1.0"/>
+</ScoreFunction>
+
+        <ScoreFunction name="r15_cst" weights="ref2015_cst.wts" >
+            <Reweight scoretype="chainbreak" weight="40.0" />
+            <Reweight scoretype="aspartimide_penalty" weight="1.0" />
+        </ScoreFunction>
+   
+        <ScoreFunction name="r15_highhbond_cst" weights="ref2015_cst.wts" >
+            <Reweight scoretype="chainbreak" weight="40.0" />
+            <Reweight scoretype="aspartimide_penalty" weight="1.0" />
+            <Reweight scoretype="hbond_sr_bb" weight="10.0" />
+            <Reweight scoretype="hbond_lr_bb" weight="10.0" />
+            <Reweight scoretype="hbond_bb_sc" weight="5.0" />
+            <Reweight scoretype="hbond_sc" weight="3.0" />
+            <Reweight scoretype="fa_elec" weight="2.0" />
+        </ScoreFunction>
+  
+        <ScoreFunction name="r15_highhbond_aacomp_cst" weights="ref2015_cst.wts" >
+            <Reweight scoretype="chainbreak" weight="40.0" />
+            <Reweight scoretype="aspartimide_penalty" weight="1.0" />
+            <Reweight scoretype="hbond_sr_bb" weight="10.0" />
+            <Reweight scoretype="hbond_lr_bb" weight="10.0" />
+            <Reweight scoretype="hbond_bb_sc" weight="5.0" />
+            <Reweight scoretype="hbond_sc" weight="3.0" />
+            <Reweight scoretype="fa_elec" weight="2.0" />
+            <Reweight scoretype="aa_composition" weight="1.0" />
+        </ScoreFunction>
+        
+<ScoreFunction name="r15_soft" weights="ref2015_soft.wts">
+<Reweight scoretype="aspartimide_penalty" weight="1.0"/>
+<Reweight scoretype="atom_pair_constraint" weight="1.0"/>
+<Reweight scoretype="angle_constraint" weight="1.0"/>
+<Reweight scoretype="dihedral_constraint" weight="1.0"/>
+<Reweight scoretype="aa_composition" weight="1.0"/>
+</ScoreFunction>
+  </SCOREFXNS>
+  
+   <RESIDUE_SELECTORS>
+        <Chain name="A_chain" chains="A"/>
+   !-- Select chain H -->
+        <Chain name="H_chain" chains="H"/>
+
+        <!-- Identify target residues to retain in chain H -->
+        <And name="target_residues">
+            <Chain chains="H"/>
+            <Index resnums="558,559,560,561,562,563"/>
+        </And>
+
+        <!-- Residues in chain H to delete (inverse selection) -->
+        <And name="non_target_H_residues">
+            <Chain chains="H"/>
+            <Not selector="target_residues"/>
+        </And>
+
+        <Index name="select_peptide" resnums="461-472" />
+        <Index name="select_stub" resnums="462-463,465" />
+
+        <Index name="select_pep_start" resnums="461" />
+        <Index name="select_pep_end" resnums="472" />
+
+        <Not name="select_target" selector="select_peptide" />
+
+        <Index name="select_design_positions" resnums="462-463,465,467,468,469,470,471,472" />
+    
+        <Neighborhood name="select_interface" resnums="461-465" distance="8.0" />
+
+        <Not name="select_not_interface" selector="select_interface" />
+
+        <And name="select_target_far_from_interface"
+            selectors="select_not_interface,select_target"
+        />
+
+        <Layer name="select_core" select_core="true" select_boundary="false"
+            select_surface="false"
+        />
+
+        <And name="select_hydrophobic_positions"
+            selectors="select_design_positions,select_core"
+        />
+
+        <Not name="select_nonhydrophobic_positions" selector="select_hydrophobic_positions" />
+
+        <And name="select_nonhydrophobic_design_positions"
+            selectors="select_nonhydrophobic_positions,select_design_positions"/>
+ </RESIDUE_SELECTORS>
+ 
+ 
+ 
+ <TASKOPERATIONS>
+ <IncludeCurrent name="use_input_rotamer" />
+ <ExtraRotamersGeneric name="extrarot" ex1="1" ex2="1" ex3="0" ex4="0"
+            extrachi_cutoff="5"/>
+   <OperateOnResidueSubset name="no_repack_target" selector="select_target" >
+            <PreventRepackingRLT />
+        </OperateOnResidueSubset>
+   <OperateOnResidueSubset name="no_repack_target_far_from_interface"
+            selector="select_target_far_from_interface">
+            <PreventRepackingRLT />
+        </OperateOnResidueSubset>
+<OperateOnResidueSubset name="no_design_stub" selector="select_stub">
+<RestrictToRepackingRLT/>
+</OperateOnResidueSubset>
+<OperateOnResidueSubset name="no_design_target" selector="select_target">
+<RestrictToRepackingRLT/>
+</OperateOnResidueSubset>
+    </TASKOPERATIONS>
+ 
+<FILTERS>
+  <ScoreType name="score" scorefxn="ref2015" score_type="total_score" threshold="0"/>
+  <ScoreType name="mc_score" scorefxn="r15_highhbond_aacomp_cst" score_type="total_score" threshold="-100"/>
+  <OversaturatedHbondAcceptorFilter name="oversat" scorefxn="ref2015" max_allowed_oversaturated="1" consider_mainchain_only="false"/>
+  <ScoreType name="score_low" scorefxn="ref2015" score_type="total_score" threshold="0"/>
+  <PeptideInternalHbondsFilter name="total_hbonds" hbond_cutoff="0" exclusion_distance="1" residue_selector="select_peptide"/>
+  <ShapeComplementarity name="shape1" min_sc="0.6" min_interface="100" residue_selector1="A_chain"
+                          residue_selector2="select_peptide" verbose="false" use_rosetta_radii="true" />
+  <ShapeComplementarity name="shape2" min_sc="0.65" min_interface="150" residue_selector1="A_chain"
+                          residue_selector2="select_peptide" verbose="false" use_rosetta_radii="true" />
+  <ScoreType name="low_stringency_clash" scorefxn="ref2015" score_type="fa_rep"
+            threshold="400"/>
+  <CombinedValue name="mc_filter" threshold="-100">
+    <Add filter_name="mc_score" factor="1.0"/>
+  </CombinedValue>
+</FILTERS>
+ 
+  <MOVERS>
+  <DeleteRegionMover name="delete_H_chain_non_target" residue_selector="non_target_H_residues"/>
+
+    <!-- Build 8 residues -->
+    <PeptideStubMover name="build_peptide">      
+      <Append anchor_rsd="466" resname="ALA" repeat="6"/>
+    </PeptideStubMover> 
+    
+    <SetTorsion name="set_torsion">
+      <Torsion residue="461-472" torsion_name="omega" angle="180"/>
+    </SetTorsion>           
+    
+    <SetTorsion name="perturb_tors">
+  <Torsion residue="462" torsion_name="phi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="8.0"/>
+  <Torsion residue="462" torsion_name="psi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="8.0"/>
+  <Torsion residue="462" torsion_name="omega" angle="perturb" perturbation_type="gaussian" perturbation_magnitude="1.0"/>
+
+  <Torsion residue="463" torsion_name="phi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="8.0"/>
+  <Torsion residue="463" torsion_name="psi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="8.0"/>
+  <Torsion residue="463" torsion_name="omega" angle="perturb" perturbation_type="gaussian" perturbation_magnitude="1.0"/>
+
+  <Torsion residue="464" torsion_name="phi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="1.0"/>
+  <Torsion residue="464" torsion_name="psi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="2.0"/>
+  <Torsion residue="464" torsion_name="omega" angle="perturb" perturbation_type="gaussian" perturbation_magnitude="1.0"/>
+
+  <Torsion residue="465" torsion_name="phi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="8.0"/>
+  <Torsion residue="465" torsion_name="psi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="8.0"/>
+  <Torsion residue="465" torsion_name="omega" angle="perturb" perturbation_type="gaussian" perturbation_magnitude="1.0"/>
+
+  <Torsion residue="466" torsion_name="phi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="1.0"/>
+  <Torsion residue="466" torsion_name="psi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="2.0"/>
+  <Torsion residue="466" torsion_name="omega" angle="perturb" perturbation_type="gaussian" perturbation_magnitude="1.0"/>
+
+  <Torsion residue="467" torsion_name="phi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="8.0"/>
+  <Torsion residue="467" torsion_name="psi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="8.0"/>
+  <Torsion residue="467" torsion_name="omega" angle="perturb" perturbation_type="gaussian" perturbation_magnitude="1.0"/>
+  <Torsion residue="468" torsion_name="phi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="8.0"/>
+  <Torsion residue="468" torsion_name="psi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="8.0"/>
+  <Torsion residue="468" torsion_name="omega" angle="perturb" perturbation_type="gaussian" perturbation_magnitude="1.0"/>
+  <Torsion residue="469" torsion_name="phi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="8.0"/>
+  <Torsion residue="469" torsion_name="psi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="8.0"/>
+  <Torsion residue="469" torsion_name="omega" angle="perturb" perturbation_type="gaussian" perturbation_magnitude="1.0"/>
+    <Torsion residue="470" torsion_name="phi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="8.0"/>
+  <Torsion residue="470" torsion_name="psi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="8.0"/>
+  <Torsion residue="470" torsion_name="omega" angle="perturb" perturbation_type="gaussian" perturbation_magnitude="1.0"/>
+    <Torsion residue="471" torsion_name="phi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="8.0"/>
+  <Torsion residue="471" torsion_name="psi"   angle="perturb" perturbation_type="gaussian" perturbation_magnitude="8.0"/>
+  <Torsion residue="471" torsion_name="omega" angle="perturb" perturbation_type="gaussian" perturbation_magnitude="1.0"/>
+</SetTorsion>
+
+    
+    <PackRotamersMover name="design" scorefxn="r15_soft" task_operations="use_input_rotamer,no_design_target,no_repack_target,no_design_stub"/>
+
+    <!-- Explicitly declare the N-C covalent bond -->
+    <DeclareBond name="connect_termini" atom1="N" res1="461" atom2="C" res2="472"/>
+    
+        <ModifyVariantType name="add_cutpoint_upper_pep" add_type="CUTPOINT_UPPER"
+            residue_selector="select_pep_start"
+        />
+        <ModifyVariantType name="add_cutpoint_lower_pep" add_type="CUTPOINT_LOWER"
+            residue_selector="select_pep_end"
+        /> 
+    
+    <MinMover name="min1" scorefxn="r15_cst" type="dfpmin" tolerance="0.001" bb="0" chi="0">
+  <MoveMap name="min1_mm">
+  <Span begin="1" end="460" chi="0" bb="0"/>
+  <Span begin="461" end="472" chi="1" bb="0"/>
+ </MoveMap>
+ </MinMover>
+ 
+ <MinMover name="min2" scorefxn="r15_cst" type="dfpmin" tolerance="0.001" bb="0" chi="0">
+  <MoveMap name="min2_mm">
+  <Span begin="1" end="460" chi="0" bb="0"/>
+  <Span begin="461" end="472" chi="1" bb="1"/>
+ </MoveMap>
+ </MinMover>
+
+    <!-- Perform loop closure with GKIC -->
+ <GeneralizedKIC name="genkic"
+                closure_attempts="1000"
+                stop_when_n_solutions_found="1"
+                selector="lowest_energy_selector"
+                selector_scorefunction="r15_highhbond_cst">
+
+  <AddResidue res_index="464"/>
+  <AddResidue res_index="465"/>
+  <AddResidue res_index="466"/>
+  <AddResidue res_index="467"/>
+ <AddResidue res_index="468"/>
+ <AddResidue res_index="469"/>
+ <AddResidue res_index="470"/>
+ <AddResidue res_index="471"/>
+  <AddResidue res_index="472"/>
+  <AddResidue res_index="461"/>
+  <AddResidue res_index="462"/>
+
+  <SetPivots res1="464" res2="472" res3="462" atom1="CA" atom2="CA" atom3="CA"/>
+  
+  <CloseBond res1="461" res2="472" atom1="N" atom2="C"
+             bondlength="1.33" angle1="121.0" angle2="116.0" torsion="180.0"/>
+ <AddPerturber effect="randomize_backbone_by_rama_prepro" >
+      <AddResidue index="464"/>
+      <AddResidue index="465"/>
+      <AddResidue index="466"/>
+      <AddResidue index="467"/>
+     <AddResidue index="468"/>
+     <AddResidue index="469"/>
+     <AddResidue index="470"/>
+     <AddResidue index="471"/>
+      <AddResidue index="472"/>
+      <AddResidue index="461"/>
+      <AddResidue index="462"/>   
+ </AddPerturber>
+  <AddFilter type="loop_bump_check"/>
+</GeneralizedKIC>
+
+ <ParsedProtocol name="genkic_perturb_steps">
+  <Add mover="connect_termini"/>
+  <Add filter="oversat"/>
+  <Add filter="total_hbonds"/>
+ </ParsedProtocol>
+
+ <GeneralizedKIC name="genkic_perturb" closure_attempts="5" pre_selection_mover="genkic_perturb_steps" stop_when_n_solutions_found="1" selector="lowest_rmsd_selector" selector_scorefunction="r15_highhbond_cst">
+
+  <AddResidue res_index="464"/>
+  <AddResidue res_index="465"/>
+  <AddResidue res_index="466"/>
+  <AddResidue res_index="467"/>
+<AddResidue res_index="468"/>
+<AddResidue res_index="469"/>
+<AddResidue res_index="470"/>
+<AddResidue res_index="471"/>
+  <AddResidue res_index="472"/>
+  <AddResidue res_index="461"/>
+  <AddResidue res_index="462"/>
+  
+  <SetPivots res1="464" res2="472" res3="462" atom1="CA" atom2="CA" atom3="CA"/>
+  
+  <CloseBond res1="461" res2="472" atom1="N" atom2="C"
+             bondlength="1.33" angle1="121.70" angle2="116.20" torsion="180.0"/>
+         
+ <AddPerturber effect="perturb_dihedral">
+  <AddAtoms res1="464" atom1="N" res2="464" atom2="CA"/>
+  <AddAtoms res1="464" atom1="CA" res2="464" atom2="C"/>
+  <AddAtoms res1="465" atom1="N" res2="465" atom2="CA"/>
+  <AddAtoms res1="465" atom1="CA" res2="465" atom2="C"/>
+  <AddAtoms res1="466" atom1="N" res2="466" atom2="CA"/>
+  <AddAtoms res1="466" atom1="CA" res2="466" atom2="C"/>
+  <AddAtoms res1="467" atom1="N" res2="467" atom2="CA"/>
+  <AddAtoms res1="467" atom1="CA" res2="467" atom2="C"/>
+  <AddAtoms res1="468" atom1="N" res2="468" atom2="CA"/>
+  <AddAtoms res1="468" atom1="CA" res2="468" atom2="C"/>
+  <AddAtoms res1="469" atom1="N" res2="469" atom2="CA"/>
+  <AddAtoms res1="469" atom1="CA" res2="469" atom2="C"/>
+  <AddAtoms res1="470" atom1="N" res2="470" atom2="CA"/>
+  <AddAtoms res1="470" atom1="CA" res2="470" atom2="C"/>
+  <AddAtoms res1="471" atom1="N" res2="471" atom2="CA"/>
+  <AddAtoms res1="471" atom1="CA" res2="471" atom2="C"/>
+  <AddAtoms res1="472" atom1="N" res2="472" atom2="CA"/>
+  <AddAtoms res1="472" atom1="CA" res2="472" atom2="C"/>
+  <AddAtoms res1="461" atom1="N" res2="461" atom2="CA"/>
+  <AddAtoms res1="461" atom1="CA" res2="461" atom2="C"/>
+  <AddAtoms res1="462" atom1="N" res2="462" atom2="CA"/>
+  <AddAtoms res1="462" atom1="CA" res2="462" atom2="C"/>
+  <AddValue value="1.5"/>
+ </AddPerturber>
+</GeneralizedKIC>
+
+<FastDesign name="fdes" repeats="3" scorefxn="r15_highhbond_aacomp_cst" 
+            min_type="dfpmin" 
+            task_operations="use_input_rotamer,no_repack_target_far_from_interface,no_design_target,no_design_stub"
+        >
+        <MoveMap name="fdes_mm" >
+                <Span begin="1" end="460" chi="1" bb="0" />
+                <Span begin="461" end="472" chi="1" bb="1" />
+            </MoveMap>
+        </FastDesign>
+        
+ <PDBTrajectoryRecorder name="record_traj" stride="1" filename="traj.pdb" cumulate_jobs="0" cumulate_replicas="0"/>
+ <PDBTrajectoryRecorder name="record_traj_accepted" stride="1" filename="accepted.pdb" cumulate_jobs="0" cumulate_replicas="0"/>
+
+ <ParsedProtocol name="mc_steps">
+  Add mover=record_traj_accepted /> #COMMENTED OUT FOR PRODUCTION RUNS.
+  <Add mover="perturb_tors"/>
+  <Add mover="genkic_perturb"/>
+  <Add mover="design"/>
+  <Add mover="min1"/>
+  <Add mover="connect_termini"/>
+  Add mover=record_traj /> #COMMENTED OUT FOR PRODUCTION RUNS.
+  <Add filter="oversat"/>
+  <Add mover="min2"/>
+  <Add mover="connect_termini"/>
+  <Add filter="oversat"/>
+  <Add filter="total_hbonds"/>
+  <Add filter="shape1"/>
+ </ParsedProtocol>
+
+ <GenericMonteCarlo name="mc_search" mover_name="mc_steps" filter_name="mc_filter" trials="500" temperature="0.5"/>
+
+ <FastRelax name="relax" repeats="3" scorefxn="r15_cst" min_type="dfpmin" task_operations="use_input_rotamer,no_repack_target_far_from_interface">
+  <MoveMap name="relax_mm">
+    <!-- Lock all residues by default -->
+    <Span begin="1" end="460" chi="1" bb="0"/>
+    <Span begin="461" end="472" chi="1" bb="1"/>
+  </MoveMap>
+ </FastRelax>
+</MOVERS>
+
+ <PROTOCOLS>
+    <Add mover_name="delete_H_chain_non_target"/>
+    <Add mover_name="build_peptide"/>
+        <Add mover_name="connect_termini"/>
+    <Add mover="add_cutpoint_upper_pep" />
+    <Add mover="add_cutpoint_lower_pep" />
+    <Add mover_name="genkic"/>
+    <Add mover="mc_search"/>
+    <Add mover="fdes"/>
+    <Add mover="relax" />
+    <Add mover="connect_termini"/>
+    <Add filter="oversat"/>
+    <Add filter="shape2"/>
+ </PROTOCOLS>
+
+ <OUTPUT/>
+</ROSETTASCRIPTS>
+```

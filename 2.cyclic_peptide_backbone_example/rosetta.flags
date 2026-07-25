@@ -1,0 +1,11 @@
+-nstruct 1000
+-parser:protocol backbone_12.xml
+-jd2:failed_job_exception false
+-in:file:s 6WJL_fix_gh_mini_0006.pdb
+-in:file:fullatom 
+-mute protocols.generalized_kinematic_closure.filter.GeneralizedKICfilter
+-mute core.chemical.AtomICoor
+-mute core.conformation.Residue
+-write_all_connect_info
+#-mute all
+
