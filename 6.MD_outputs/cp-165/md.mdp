@@ -1,0 +1,84 @@
+; ============================================================
+; Production MD for cyclic peptide
+; GROMACS 2021.3 + CHARMM27
+; ============================================================
+
+; Run parameters
+integrator              = md
+dt                      = 0.002          ; 2 fs
+nsteps                  = 50000000       ; 100 ns
+
+; ------------------------------------------------------------
+; Output control
+; ------------------------------------------------------------
+nstenergy               = 1000           ; energy every 2 ps
+nstlog                  = 5000           ; log every 10 ps
+nstxout-compressed      = 5000           ; trajectory every 10 ps
+
+; ------------------------------------------------------------
+; Bond constraints
+; ------------------------------------------------------------
+continuation            = yes
+constraint_algorithm    = lincs
+constraints             = h-bonds
+lincs_iter              = 1
+lincs_order             = 4
+
+; ------------------------------------------------------------
+; Neighbor searching / van der Waals
+; CHARMM36 settings
+; ------------------------------------------------------------
+cutoff-scheme           = Verlet
+nstlist                 = 20
+
+rlist                   = 1.2
+verlet-buffer-tolerance = 0.005
+
+vdwtype                 = Cut-off
+vdw-modifier            = Force-switch
+rvdw-switch             = 1.0
+rvdw                    = 1.2
+
+; ------------------------------------------------------------
+; Electrostatics
+; CHARMM36 + PME
+; ------------------------------------------------------------
+coulombtype             = PME
+rcoulomb                = 1.2
+pme_order               = 4
+fourierspacing          = 0.16
+
+; ------------------------------------------------------------
+; Temperature coupling
+; Recommended for a small cyclic peptide system
+; ------------------------------------------------------------
+tcoupl                  = V-rescale
+tc-grps                 = System
+tau_t                   = 1.0
+ref_t                   = 300
+
+; ------------------------------------------------------------
+; Pressure coupling
+; ------------------------------------------------------------
+pcoupl                  = Parrinello-Rahman
+pcoupltype              = isotropic
+tau_p                   = 2.0
+ref_p                   = 1.0
+compressibility         = 4.5e-5
+
+; ------------------------------------------------------------
+; Periodic boundary conditions
+; ------------------------------------------------------------
+pbc                     = xyz
+
+; ------------------------------------------------------------
+; Dispersion correction
+; CHARMM36
+; ------------------------------------------------------------
+DispCorr                = no
+
+; ------------------------------------------------------------
+; Velocity generation
+; Continue from NPT equilibration
+; ------------------------------------------------------------
+gen_vel                 = no
