@@ -1,0 +1,54 @@
+REMARK   1 REPAIRED CYCLIC PEPTIDE PDB
+REMARK   2 SEQUENCE: GLY-ALA-LEU-GLY-TRP-GLU
+REMARK   3 HEAD-TO-TAIL CYCLIZATION: GLU A 6 C -- GLY A 1 N
+REMARK   4 ORIGINAL ERRONEOUS GLU6 C -- GLY1 CA CONTACT WAS REMOVED
+REMARK   5 HYDROGENS OMITTED INTENTIONALLY; GENERATE WITH THE SELECTED FORCE FIELD
+REMARK   6 LOCAL GEOMETRY RELAXATION APPLIED AROUND RESIDUES 1, 2 AND 6
+LINK         C   GLU A   6                 N   GLY A   1                  1.37
+ATOM      1  N   GLY A   1      -7.075 -51.102  49.529  1.00  0.00           N
+ATOM      2  CA  GLY A   1      -7.823 -49.870  49.684  1.00  0.00           C
+ATOM      3  C   GLY A   1      -7.994 -49.300  51.099  1.00  0.00           C
+ATOM      4  O   GLY A   1      -8.382 -48.140  51.249  1.00  0.00           O
+ATOM      5  N   ALA A   2      -7.778 -50.145  52.173  1.00  0.00           N
+ATOM      6  CA  ALA A   2      -7.937 -49.627  53.535  1.00  0.00           C
+ATOM      7  C   ALA A   2      -7.154 -50.364  54.662  1.00  0.00           C
+ATOM      8  O   ALA A   2      -6.595 -49.704  55.544  1.00  0.00           O
+ATOM      9  CB  ALA A   2      -9.426 -49.478  53.907  1.00  0.00           C
+ATOM     10  N   LEU A   3      -7.253 -51.746  54.759  1.00  0.00           N
+ATOM     11  CA  LEU A   3      -6.575 -52.452  55.840  1.00  0.00           C
+ATOM     12  C   LEU A   3      -5.472 -53.338  55.269  1.00  0.00           C
+ATOM     13  O   LEU A   3      -4.614 -52.855  54.532  1.00  0.00           O
+ATOM     14  CB  LEU A   3      -7.563 -53.284  56.651  1.00  0.00           C
+ATOM     15  CG  LEU A   3      -8.365 -52.532  57.715  1.00  0.00           C
+ATOM     16  CD1 LEU A   3      -7.436 -51.797  58.669  1.00  0.00           C
+ATOM     17  CD2 LEU A   3      -9.287 -51.509  57.068  1.00  0.00           C
+ATOM     18  N   GLY A   4      -5.491 -54.630  55.605  1.00  0.00           N
+ATOM     19  CA  GLY A   4      -4.484 -55.564  55.115  1.00  0.00           C
+ATOM     20  C   GLY A   4      -4.869 -56.169  53.768  1.00  0.00           C
+ATOM     21  O   GLY A   4      -4.135 -56.997  53.233  1.00  0.00           O
+ATOM     22  N   TRP A   5      -6.016 -55.759  53.221  1.00  0.00           N
+ATOM     23  CA  TRP A   5      -6.478 -56.273  51.936  1.00  0.00           C
+ATOM     24  C   TRP A   5      -6.125 -55.328  50.792  1.00  0.00           C
+ATOM     25  O   TRP A   5      -4.995 -55.340  50.310  1.00  0.00           O
+ATOM     26  CB  TRP A   5      -7.991 -56.511  51.970  1.00  0.00           C
+ATOM     27  CG  TRP A   5      -8.401 -57.640  52.865  1.00  0.00           C
+ATOM     28  CD1 TRP A   5      -7.575 -58.483  53.551  1.00  0.00           C
+ATOM     29  CD2 TRP A   5      -9.740 -58.048  53.169  1.00  0.00           C
+ATOM     30  NE1 TRP A   5      -8.315 -59.394  54.265  1.00  0.00           N
+ATOM     31  CE2 TRP A   5      -9.650 -59.146  54.047  1.00  0.00           C
+ATOM     32  CE3 TRP A   5     -11.004 -57.592  52.785  1.00  0.00           C
+ATOM     33  CZ2 TRP A   5     -10.776 -59.798  54.549  1.00  0.00           C
+ATOM     34  CZ3 TRP A   5     -12.120 -58.237  53.281  1.00  0.00           C
+ATOM     35  CH2 TRP A   5     -12.003 -59.330  54.157  1.00  0.00           C
+ATOM     36  N   GLU A   6      -7.055 -54.418  50.381  1.00  0.00           N
+ATOM     37  CA  GLU A   6      -6.790 -53.529  49.260  1.00  0.00           C
+ATOM     38  C   GLU A   6      -7.694 -52.327  49.580  1.00  0.00           C
+ATOM     39  O   GLU A   6      -8.856 -52.457  49.969  1.00  0.00           O
+ATOM     40  CB  GLU A   6      -7.125 -54.183  47.912  1.00  0.00           C
+ATOM     41  CG  GLU A   6      -6.136 -55.270  47.521  1.00  0.00           C
+ATOM     42  CD  GLU A   6      -6.465 -55.901  46.183  1.00  0.00           C
+ATOM     43  OE1 GLU A   6      -7.489 -55.519  45.580  1.00  0.00           O
+ATOM     44  OE2 GLU A   6      -5.697 -56.780  45.736  1.00  0.00           O
+CONECT   38    1
+CONECT    1   38
+END
