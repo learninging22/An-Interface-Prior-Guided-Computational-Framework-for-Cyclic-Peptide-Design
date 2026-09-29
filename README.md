@@ -35,14 +35,19 @@ This repository provides an interface-prior-guided computational framework for c
 │   ├── adcp_dock.sh
 │   └── rosetta_cms_sap_ddg_analysis.xml
 │
-├── 6.MD_outputs/
-│   ├── 6WJL_pro/
-│   ├── cycpep-165/
-│   ├── cycpep-673/
-│   ├── cycpep-762/
-│   ├── cycpep-876/
-│   └── cycppep-1760/
-│
+├── 6.MD_outputs/ 
+│   ├── 6WJL_pro/ 
+│   ├── cycpep-165/ 
+│   ├── cycpep-673/ 
+│   ├── cycpep-762/ 
+│   ├── cycpep-876/ 
+│   ├── cycppep-1760/ 
+│   ├── cp-165/ 
+│   ├── cp-673/ 
+│   ├── cp-1760/ 
+│   ├── cp-876/ 
+│   └── cp-762/
+|
 ├── .gitattributes
 └── README.md
 ```
